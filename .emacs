@@ -1,4 +1,3 @@
-
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
@@ -13,7 +12,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(js-indent-level 2)
- '(package-selected-packages (quote (company-irony irony yaml-mode js2-mode swift-mode))))
+ '(package-selected-packages
+   (quote
+    (company-jedi company-irony irony yaml-mode js2-mode swift-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -151,11 +152,19 @@
 ;; (add-hook 'c-mode-hook 'company-mode)
 ;; (add-hook 'objc-mode-hook 'company-mode)
 
-;; (when (locate-library "company")
-;;   (global-set-key (kbd "C-o") 'company-complete)
-;;   ;; (setq company-idle-delay nil) ; 自動補完をしない
-;;   (define-key company-active-map (kbd "C-n") 'company-select-next)
-;;   (define-key company-active-map (kbd "C-p") 'company-select-previous)
-;;   (define-key company-search-map (kbd "C-n") 'company-select-next)
-;;   (define-key company-search-map (kbd "C-p") 'company-select-previous))
-;;   ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
+;;; company
+(when (locate-library "company")
+  (global-set-key (kbd "C-o") 'company-complete)
+  ;; (setq company-idle-delay nil) ; 自動補完をしない
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-search-map (kbd "C-n") 'company-select-next)
+  (define-key company-search-map (kbd "C-p") 'company-select-previous))
+  ;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
+
+;;; jedi
+(require 'jedi-core)
+(setq jedi:complete-on-dot t)
+(setq jedi:use-shortcuts t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(add-to-list 'company-backends 'company-jedi)
