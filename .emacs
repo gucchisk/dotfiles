@@ -14,7 +14,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (company-jedi company-irony irony yaml-mode js2-mode swift-mode))))
+    (cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -49,52 +49,13 @@
 (define-key company-active-map (kbd "C-p") 'company-select-previous)
 (define-key company-search-map (kbd "C-n") 'company-select-next)
 (define-key company-search-map (kbd "C-p") 'company-select-previous)
-;; (define-key company-active-map (kbd "<tab>") 'company-complete-selection))
-(defun company--insert-candidate2 (candidate)
-  (when (> (length candidate) 0)
-    (setq candidate (substring-no-properties candidate))
-    (if (eq (company-call-backend 'ignore-case) 'keep-prefix)
-        (insert (company-strip-prefix candidate))
-      (if (equal company-prefix candidate)
-          (company-select-next)
-          (delete-region (- (point) (length company-prefix)) (point))
-        (insert candidate))
-      )))
 
-(defun company-complete-common2 ()
-  (interactive)
-  (when (company-manual-begin)
-    (if (and (not (cdr company-candidates))
-             (equal company-common (car company-candidates)))
-        (company-complete-selection)
-      (company--insert-candidate2 company-common))))
-
-(define-key company-active-map [tab] 'company-complete-common2)
-(define-key company-active-map [backtab] 'company-select-previous)
-;; (setq company-transformers '(company-sort-by-statistics company-sort-by-backend-importance))
-
-;;; irony
-(require 'irony)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-(with-eval-after-load 'company
-  (add-to-list 'company-backends 'company-irony))
-;; 連想リストの中身を文字列のリストに変更せず、変数そのままの構造を利用。
-;; 複数のコンパイルオプションはスペースで区切る
-(setq irony-lang-compile-option-alist
-      (quote ((c++-mode . "c++ -std=c++11 -lstdc++")
-              (c-mode . "c")
-              (objc-mode . "objective-c"))))
-;; アドバイスによって関数を再定義。
-;; split-string によって文字列をスペース区切りでリストに変換
-;; (24.4以降 新アドバイス使用)
-(defun ad-irony--lang-compile-option ()
-  (defvar irony-lang-compile-option-alist)
-  (let ((it (cdr-safe (assq major-mode irony-lang-compile-option-alist))))
-    (when it (append '("-x") (split-string it "\s")))))
-(advice-add 'irony--lang-compile-option :override #'ad-irony--lang-compile-option)
+(eval-after-load "irony"
+  '(progn
+     (custom-set-variables '(irony-additional-clang-options '("-std=c++11")))
+     (add-to-list 'company-backends 'company-irony)
+     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+     (add-hook 'c-mode-common-hook 'irony-mode)))
 
 ;;; jedi
 (require 'jedi-core)
