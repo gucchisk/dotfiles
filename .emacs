@@ -6,6 +6,37 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'load-path "~/.emacs.d/elpa")
 
+;;; tide for typescript
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+;; (require 'tide)
+;; (add-hook 'typescript-mode-hook
+;; 	  (lambda ()
+;; 	    (tide-setup)
+;; 	    (flycheck-mode t)
+;; 	    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;; 	    (eldoc-mode t)
+;; 	    (company-mode-on)))
+
+
 ;;; theme
 ;; (add-hook 'after-init-hook 
 ;; 	  (lambda () (load-theme 'cyberpunk t)))
@@ -19,7 +50,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
+    (tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
