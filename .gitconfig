@@ -1,0 +1,12 @@
+[alias]
+   st = status
+   br = branch
+   ci = commit
+   co = checkout
+   stashl = stash list
+   stasha = stash apply
+   stashp = stash pop
+   stashd = stash drop
+[user]
+   name = gucchisk
+   email = gucchi_sk@yahoo.co.jp
