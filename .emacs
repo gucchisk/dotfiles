@@ -27,16 +27,6 @@
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-;; (require 'tide)
-;; (add-hook 'typescript-mode-hook
-;; 	  (lambda ()
-;; 	    (tide-setup)
-;; 	    (flycheck-mode t)
-;; 	    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-;; 	    (eldoc-mode t)
-;; 	    (company-mode-on)))
-
-
 ;;; theme
 ;; (add-hook 'after-init-hook 
 ;; 	  (lambda () (load-theme 'cyberpunk t)))
@@ -61,6 +51,18 @@
 
 (package-initialize)
 
+;;; key bind
+(require 'bind-key)
+;; replace
+(bind-key "C-c C-r" 'query-replace)
+;; backward
+(bind-key "C-h" 'delete-backward-char)
+;; window move
+(bind-key "<left>" 'windmove-left)
+(bind-key "<right>" 'windmove-right)
+(bind-key "<up>" 'windmove-up)
+(bind-key "<down>" 'windmove-down)
+
 ;;; js2-mode
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.[m]js\\'" . js2-mode))
@@ -75,14 +77,6 @@
 ;;; .emacs symlink
 (setq vc-follow-symlinks t)
 
-(global-set-key "\C-h" 'delete-backward-char)
-
-;; window move
-(global-set-key (kbd "<left>") 'windmove-left)
-(global-set-key (kbd "<right>") 'windmove-right)
-(global-set-key (kbd "<up>") 'windmove-up)
-(global-set-key (kbd "<down>") 'windmove-down)
-
 ;;; menu bar
 (menu-bar-mode 0)
 
@@ -96,12 +90,14 @@
 (add-hook 'c-mode-hook 'company-mode)
 (add-hook 'objc-mode-hook 'company-mode)
 
-(global-set-key (kbd "C-o") 'company-complete)
+(bind-key "C-o" 'company-complete)
 ;;; (setq company-idle-delay nil) ; 自動補完をしない
-(define-key company-active-map (kbd "C-n") 'company-select-next)
-(define-key company-active-map (kbd "C-p") 'company-select-previous)
-(define-key company-search-map (kbd "C-n") 'company-select-next)
-(define-key company-search-map (kbd "C-p") 'company-select-previous)
+(bind-keys :map company-active-map
+	   ("C-n" . company-select-next)
+	   ("C-p" . company-select-previous))
+(bind-keys :map company-search-map
+	   ("C-n" . company-select-next)
+	   ("C-p" . company-select-previous))
 
 (eval-after-load "irony"
   '(progn
