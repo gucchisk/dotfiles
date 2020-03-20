@@ -6,6 +6,40 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'load-path "~/.emacs.d/elpa")
 
+(package-initialize)
+
+;;; key bind
+(require 'bind-key)
+;; replace
+(bind-key "C-c C-r" 'query-replace)
+;; backward
+(bind-key "C-h" 'delete-backward-char)
+;; window move
+(bind-key "<left>" 'windmove-left)
+(bind-key "<right>" 'windmove-right)
+(bind-key "<up>" 'windmove-up)
+(bind-key "<down>" 'windmove-down)
+
+;;; php-mode
+(add-hook 'php-mode-hook
+	  '(lambda()
+	     (setq tab-width 2)
+	     (setq indent-tabs-mode t)
+	     (setq c-basic-offset 2)))
+;;; ac-php
+(add-hook 'php-mode-hook
+	  '(lambda()
+	     (company-mode t)
+	     (require 'company-php)
+	     (ac-php-core-eldoc-setup)
+
+	     (set (make-local-variable 'company-backends)
+		  '((company-ac-php-backend company-dabbrev-code)
+		    company-capf company-files))
+	     (bind-key "C-u" 'ac-php-find-symbol-at-point php-mode-map)
+	     (bind-key "C-i" 'ac-php-location-stack-back php-mode-map)
+	     ))
+
 ;;; tide for typescript
 (defun setup-tide-mode ()
   (interactive)
@@ -40,7 +74,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
+    (company-php ac-php tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -48,20 +82,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
-(package-initialize)
-
-;;; key bind
-(require 'bind-key)
-;; replace
-(bind-key "C-c C-r" 'query-replace)
-;; backward
-(bind-key "C-h" 'delete-backward-char)
-;; window move
-(bind-key "<left>" 'windmove-left)
-(bind-key "<right>" 'windmove-right)
-(bind-key "<up>" 'windmove-up)
-(bind-key "<down>" 'windmove-down)
 
 ;;; js2-mode
 (require 'js2-mode)
@@ -105,6 +125,8 @@
      (add-to-list 'company-backends 'company-irony)
      (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
      (add-hook 'c-mode-common-hook 'irony-mode)))
+
+
 
 ;;; jedi
 ;; (require 'jedi-core)
