@@ -20,6 +20,12 @@
 (bind-key "<up>" 'windmove-up)
 (bind-key "<down>" 'windmove-down)
 
+;;; dash
+(autoload 'dash-at-point "dash-at-point"
+  "Search the word at point with Dash." t nil)
+(bind-key "C-c d" 'dash-at-point)
+(bind-key "C-c e" 'dash-at-point-with-docset)
+
 ;;; php-mode
 (add-hook 'php-mode-hook
 	  '(lambda()
@@ -74,7 +80,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (company-php ac-php tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
+    (dash-at-point company-php ac-php tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic cmake-mode company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
