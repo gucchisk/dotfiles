@@ -42,8 +42,8 @@
 	     (set (make-local-variable 'company-backends)
 		  '((company-ac-php-backend company-dabbrev-code)
 		    company-capf company-files))
-	     (bind-key "M-;" 'ac-php-find-symbol-at-point php-mode-map)
-	     (bind-key "M-'" 'ac-php-location-stack-back php-mode-map)
+	     (bind-key "M-[" 'ac-php-find-symbol-at-point php-mode-map)
+	     (bind-key "M-]" 'ac-php-location-stack-back php-mode-map)
 	     ))
 
 ;;; tide for typescript
