@@ -5,6 +5,7 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'load-path "~/.emacs.d/elpa")
+(setq load-path (cons "~/.emacs.d/elisp" load-path))
 
 (package-initialize)
 
@@ -19,6 +20,9 @@
 (bind-key "<right>" 'windmove-right)
 (bind-key "<up>" 'windmove-up)
 (bind-key "<down>" 'windmove-down)
+
+;;; wat
+(require 'wat-mode)
 
 ;;; dash
 (autoload 'dash-at-point "dash-at-point"
@@ -94,7 +98,6 @@
 (add-to-list 'auto-mode-alist '("\\.[m]js\\'" . js2-mode))
 
 ;;; elisp dir
-(setq load-path (cons "~/.emacs.d/elisp" load-path))
 (require 'gyp)
 
 ;;; gyp
