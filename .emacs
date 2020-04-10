@@ -30,6 +30,11 @@
 (bind-key "C-c d" 'dash-at-point)
 (bind-key "C-c e" 'dash-at-point-with-docset)
 
+;;; c++
+(add-hook 'c++-mode-hook
+	  '(lambda()
+	     (c-set-offset 'innamespace 0)))
+
 ;;; php-mode
 (add-hook 'php-mode-hook
 	  '(lambda()
