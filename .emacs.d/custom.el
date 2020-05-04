@@ -6,7 +6,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (dash-at-point company-php ac-php tide typescript-mode ini-mode python-mode php-mode go-mode lsp-rust lsp-mode rustic company-jedi company-irony irony yaml-mode js2-mode swift-mode)))
+    (company-jedi projectile ag xref-js2 js2-refactor yaml-mode use-package tide swift-mode rustic python-mode lsp-rust json-mode js2-mode jedi-core ini-mode dash-at-point company-php company-irony ac-php)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
