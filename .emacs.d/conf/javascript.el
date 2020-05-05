@@ -29,7 +29,7 @@
   "Return depth attribute for CANDIDATE. 'nil' entries are treated as 0."
   (let ((depth (get-text-property 0 'depth candidate)))
     (if (eq depth nil) 0 depth)))
-(add-to-list 'company-backends 'company-tern)
+;; (add-to-list 'company-backends 'company-tern)
 (add-hook 'js2-mode-hook
 	  (lambda ()
 	    (setq tern-command '("tern" "--no-port-file"))

@@ -1,1 +1,1 @@
-set SDKROOT (xcrun --sdk macosx --show-sdk-path)
+set -x SDKROOT (xcrun --sdk macosx --show-sdk-path)
