@@ -50,6 +50,9 @@
 ;;; php
 (load "php")
 
+;;; go
+(load "go")
+
 ;;; gyp
 (require 'gyp)
 
