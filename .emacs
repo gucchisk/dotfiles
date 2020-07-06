@@ -29,6 +29,10 @@
 ;;; global keybind
 (load "keybind")
 
+;;; helm
+(require 'helm-config)
+(helm-mode 1)
+
 ;;; company
 (load "comp")
 
