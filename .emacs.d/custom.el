@@ -6,7 +6,7 @@
  '(js-indent-level 2)
  '(package-selected-packages
    (quote
-    (magit dockerfile-mode helm lua-mode nginx-mode company-go go-mode company irony company-jedi projectile ag xref-js2 js2-refactor yaml-mode use-package tide swift-mode rustic python-mode lsp-rust json-mode js2-mode jedi-core ini-mode dash-at-point company-php company-irony ac-php)))
+    (lsp-sourcekit magit dockerfile-mode helm lua-mode nginx-mode company-go go-mode company irony company-jedi projectile ag xref-js2 js2-refactor yaml-mode use-package tide swift-mode rustic python-mode json-mode js2-mode jedi-core ini-mode dash-at-point company-php company-irony ac-php)))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

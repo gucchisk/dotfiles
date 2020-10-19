@@ -57,6 +57,9 @@
 ;;; go
 (load "go")
 
+;;; swift
+(load "swift")
+
 ;;; gyp
 (require 'gyp)
 
