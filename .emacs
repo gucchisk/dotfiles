@@ -14,6 +14,9 @@
 (when (eq system-type 'darwin)
   (add-to-list 'load-path "/usr/local/opt/cmake/share/emacs/site-lisp/cmake"))
 
+;;; ignore cl deprecated warning
+(setq byte-compile-warnings '(cl-functions))
+
 ;;; theme
 (load-theme 'tango-dark t)
 
