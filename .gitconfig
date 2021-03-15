@@ -7,3 +7,5 @@
    stasha = stash apply
    stashp = stash pop
    stashd = stash drop
+[include]
+   path = ~/.gituser
