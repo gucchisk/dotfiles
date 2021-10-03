@@ -39,11 +39,11 @@
 ;;; company
 (load "comp")
 
-;;; javascript
-(load "javascript")
-
 ;;; typescript
 (load "typescript")
+
+;;; javascript
+(load "javascript")
 
 ;;; c++
 (load "cpp")

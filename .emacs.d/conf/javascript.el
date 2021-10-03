@@ -24,16 +24,33 @@
 (add-hook 'js2-mode-hook (lambda ()
   (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
 
-(require 'company-tern)
-(defun company-tern-depth (candidate)
-  "Return depth attribute for CANDIDATE. 'nil' entries are treated as 0."
-  (let ((depth (get-text-property 0 'depth candidate)))
-    (if (eq depth nil) 0 depth)))
+
+(add-hook 'js2-mode-hook #'setup-tide-mode)
+
+;;; company-tern
+;; (require 'company-tern)
+;; (defun company-tern-depth (candidate)
+;;   "Return depth attribute for CANDIDATE. 'nil' entries are treated as 0."
+;;   (let ((depth (get-text-property 0 'depth candidate)))
+;;     (if (eq depth nil) 0 depth)))
 ;; (add-to-list 'company-backends 'company-tern)
-(add-hook 'js2-mode-hook
-	  (lambda ()
-	    (setq tern-command '("tern" "--no-port-file"))
-	    (tern-mode)
-	    (company-mode)))
-(bind-key "M-." nil tern-mode-keymap)
-(bind-key "M-," nil tern-mode-keymap)
+;; (add-hook 'js2-mode-hook
+;; (lambda ()
+;;   (setq tern-command '("tern" "--no-port-file"))
+;;   (tern-mode t)
+;;   (company-mode)))
+;; (bind-key "M-." nil tern-mode-keymap)
+;; (bind-key "M-," nil tern-mode-keymap)
+
+;;; tern-auto-complete
+;; (add-hook 'js2-mode-hook
+;; (lambda ()
+;;   (setq tern-command '("tern" "--no-port-file"))
+;;   (tern-mode t)))
+;; (eval-after-load 'tern
+;;   '(progn
+;;      (require 'auto-complete)
+;;      (require 'auto-complete-config)
+;;      (auto-complete-mode t)
+;;      (require 'tern-auto-complete)
+;;      (tern-ac-setup)))
