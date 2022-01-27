@@ -11,6 +11,9 @@
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/conf")
 
+;;; tab->space
+(setq-default indent-tabs-mode nil)
+
 (when (eq system-type 'darwin)
   (add-to-list 'load-path "/usr/local/opt/cmake/share/emacs/site-lisp/cmake"))
 
