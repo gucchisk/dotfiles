@@ -1,7 +1,9 @@
 ;;; c++
 (add-hook 'c++-mode-hook
 	  '(lambda()
-	     (c-set-offset 'innamespace 0)))
+	     (c-set-offset 'innamespace 0)
+	     (c-set-offset 'access-label -1)
+             ))
 
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
 
