@@ -11,6 +11,10 @@
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/conf")
 
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 ;;; tab->space
 (setq-default indent-tabs-mode nil)
 
@@ -36,7 +40,7 @@
 (load "keybind")
 
 ;;; helm
-(require 'helm-config)
+(require 'helm)
 (helm-mode 1)
 
 ;;; company
@@ -77,7 +81,3 @@
 
 ;;; shell
 (load "sh")
-
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file))
