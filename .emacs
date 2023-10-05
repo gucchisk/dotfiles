@@ -11,6 +11,17 @@
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/conf")
 
+;;; line number
+(if (version<= "26.0.50" emacs-version)
+    (progn
+      (global-display-line-numbers-mode)
+      (set-face-attribute 'line-number nil
+                          :foreground "OliveDrab"
+                          :background "gray17")
+      (set-face-attribute 'line-number-current-line nil
+                          :foreground "gold")
+      ))
+
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))

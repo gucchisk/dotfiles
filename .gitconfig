@@ -9,3 +9,6 @@
    stashd = stash drop
 [include]
    path = ~/.gituser
+[user]
+	name = gucchisk
+	email = gucchi_sk@yahoo.co.jp
