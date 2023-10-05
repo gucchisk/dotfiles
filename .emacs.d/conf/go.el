@@ -26,3 +26,5 @@
 
 (require 'go-guru)
 (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
+(with-eval-after-load 'go-guru
+  (bind-key "M-m" 'go-guru-referrers go-mode-map))
