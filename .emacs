@@ -73,7 +73,7 @@
 (load "dash-mac")
 
 ;;; php
-(load "php")
+(load "php-conf")
 
 ;;; go
 (load "go")
@@ -92,3 +92,7 @@
 
 ;;; shell
 (load "sh")
+
+;;; copilot
+(load "github-copilot")
+
