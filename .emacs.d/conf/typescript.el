@@ -14,4 +14,8 @@
 ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
 
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
+;;; if you use typescript-mode
+;; (add-hook 'typescript-mode-hook #'setup-tide-mode)
+(add-hook 'typescript-ts-mode-hook #'setup-tide-mode)
+
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
