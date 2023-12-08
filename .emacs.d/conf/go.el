@@ -1,7 +1,9 @@
 (require 'go-mode)
-(with-eval-after-load 'go-mode
-  (bind-key "M-." 'godef-jump go-mode-map)
-  (bind-key "M-," 'pop-tag-mark go-mode-map))
+
+;;; godef
+;; (with-eval-after-load 'go-mode
+;;   (bind-key "M-." 'godef-jump go-mode-map)
+;;   (bind-key "M-," 'pop-tag-mark go-mode-map))
 
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
 
@@ -24,7 +26,8 @@
  '(("gopls.completeUnimported" t t)
    ("gopls.staticcheck" t t)))
 
-(require 'go-guru)
-(add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
-(with-eval-after-load 'go-guru
-  (bind-key "M-m" 'go-guru-referrers go-mode-map))
+;;; go guru
+;; (require 'go-guru)
+;; (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
+;; (with-eval-after-load 'go-guru
+;;   (bind-key "M-m" 'go-guru-referrers go-mode-map))

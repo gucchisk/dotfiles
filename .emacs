@@ -96,3 +96,5 @@
 ;;; copilot
 (load "github-copilot")
 
+;;; lsp
+(load "lsp-conf")
