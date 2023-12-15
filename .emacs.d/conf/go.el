@@ -7,6 +7,8 @@
 
 (add-to-list 'exec-path (expand-file-name "~/go/bin"))
 
+;;; gopls
+;; require `go install golang.org/x/tools/gopls@latest`
 (require 'lsp-mode)
 (add-hook 'go-mode-hook #'lsp-deferred)
 (add-hook 'go-mode-hook
