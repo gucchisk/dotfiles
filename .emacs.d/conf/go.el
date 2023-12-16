@@ -12,9 +12,10 @@
 (require 'lsp-mode)
 (add-hook 'go-mode-hook #'lsp-deferred)
 (add-hook 'go-mode-hook
-	  (lambda ()
-	    (company-mode)
-	    (add-to-list 'company-backends 'company-capf)))
+          (lambda ()
+            (setq tab-width 4)
+            (company-mode)
+            (add-to-list 'company-backends 'company-capf)))
 ;; (setq lsp-prefer-capf t)
 
 ;; Set up before-save hooks to format buffer and add/delete imports.
