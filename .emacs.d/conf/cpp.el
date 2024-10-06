@@ -33,3 +33,29 @@
 
 ;;; cmake-mode
 (require 'cmake-mode)
+
+
+;;; rtags
+(add-to-list 'load-path "/opt/homebrew/Cellar/rtags/2.40_3/share/emacs/site-lisp/rtags/")
+
+(use-package cmake-ide
+  :bind
+  (("<f9>" . cmake-ide-compile))
+  :config
+  (progn
+    (setq
+     cmake-ide-rdm-executable "/opt/homebrew/bin/rdm"
+     cmake-ide-rc-executable "/opt/homebrew/bin/rc")))
+
+(use-package rtags
+  :config
+  (rtags-enable-standard-keybindings c-mode-base-map)
+  (cmake-ide-setup)
+  (setq rtags-path "/opt/homebrew/bin")
+  (bind-keys :map c-mode-base-map
+             ("M-." . rtags-find-symbol-at-point)
+             ("M-," . rtags-location-stack-back)
+             ("M-/" . rtags-find-references-at-point)
+             ("M-;" . rtags-find-symbol)
+             )
+  )

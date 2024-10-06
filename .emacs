@@ -10,6 +10,7 @@
 (add-to-list 'load-path "~/.emacs.d/elpa")
 (add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/conf")
+;; (setq package-check-signature nil)
 
 ;;; line number
 (if (version<= "26.0.50" emacs-version)
