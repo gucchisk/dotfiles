@@ -33,6 +33,15 @@
 (when (eq system-type 'darwin)
   (add-to-list 'load-path "/usr/local/opt/cmake/share/emacs/site-lisp/cmake"))
 
+;;; mark-multiple
+(require 'inline-string-rectangle)
+(globa-set-key (kbd "C-x r t") 'inline-string-rectangle)
+(require 'mark-more-like-this)
+(global-set-key (kbd "C-l") 'mark-previous-like-this)
+(global-set-key (kbd "C-;") 'mark-next-like-this)
+(global-set-key (kbd "C-M-m") 'mark-more-like-this)
+(global-set-key (kbd "C-*") 'mark-all-like-this)
+
 ;;; ignore cl deprecated warning
 (setq byte-compile-warnings '(cl-functions))
 
