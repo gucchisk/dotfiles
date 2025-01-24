@@ -35,7 +35,7 @@
 
 ;;; mark-multiple
 (require 'inline-string-rectangle)
-(globa-set-key (kbd "C-x r t") 'inline-string-rectangle)
+(global-set-key (kbd "C-x r t") 'inline-string-rectangle)
 (require 'mark-more-like-this)
 (global-set-key (kbd "C-l") 'mark-previous-like-this)
 (global-set-key (kbd "C-;") 'mark-next-like-this)
