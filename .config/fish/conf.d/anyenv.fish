@@ -1,3 +1,3 @@
-if set -q use_anyenv; and $use_anyenv
+if type -q anyenv
     status --is-interactive; and source (anyenv init -|psub)
 end

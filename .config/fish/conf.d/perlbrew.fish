@@ -1,3 +1,3 @@
-if set -q use_perlbrew; and $use_perlbrew
+if [ -f $HOME/perl5/perlbrew/etc/perlbrew.fish ]
     source $HOME/perl5/perlbrew/etc/perlbrew.fish
 end

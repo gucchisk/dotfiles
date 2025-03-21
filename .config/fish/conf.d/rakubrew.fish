@@ -1,3 +1,3 @@
-if set -q use_rakubrew; and $use_rakubrew
+if [ -f $HOME/.rakubrew/bin/rakubrew ]
     $HOME/.rakubrew/bin/rakubrew init Fish | source
 end
