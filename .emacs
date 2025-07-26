@@ -106,5 +106,8 @@
 ;;; copilot
 (load "github-copilot")
 
+;;; vue
+(load "vue")
+
 ;;; lsp
 (load "lsp-conf")
