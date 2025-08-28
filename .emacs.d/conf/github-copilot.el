@@ -20,5 +20,4 @@
   )
 (require 'copilot-chat)
 (global-set-key (kbd "C-c c c") 'copilot-chat-display)
-(global-set-key (kbd "C-c c s") 'copilot-chat-send)
 (global-set-key (kbd "C-c c r") 'copilot-chat-reset)

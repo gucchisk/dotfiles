@@ -111,3 +111,6 @@
 
 ;;; lsp
 (load "lsp-conf")
+
+;;; gptel
+(load "gptel-conf")
