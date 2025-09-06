@@ -22,5 +22,6 @@
 (with-eval-after-load 'copilot-chat
   (define-key global-map (kbd "C-c c c") #'copilot-chat-display)
   (define-key global-map (kbd "C-c c a") #'copilot-chat-add-current-buffer)
+  (define-key global-map (kbd "C-c c s") #'copilot-chat-custom-prompt-selection)
   (define-key global-map (kbd "C-c c r") #'copilot-chat-reset)
   )
