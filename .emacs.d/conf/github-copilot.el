@@ -18,6 +18,9 @@
   :config
   ;; 設定をここに書く
   )
-(require 'copilot-chat)
-(global-set-key (kbd "C-c c c") 'copilot-chat-display)
-(global-set-key (kbd "C-c c r") 'copilot-chat-reset)
+(setopt copilot-chat-backend 'request)
+(with-eval-after-load 'copilot-chat
+  (define-key global-map (kbd "C-c c c") #'copilot-chat-display)
+  (define-key global-map (kbd "C-c c a") #'copilot-chat-add-current-buffer)
+  (define-key global-map (kbd "C-c c r") #'copilot-chat-reset)
+  )
