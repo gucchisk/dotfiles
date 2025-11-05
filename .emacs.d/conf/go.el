@@ -14,6 +14,8 @@
 (add-hook 'go-mode-hook
           (lambda ()
             (setq tab-width 4)
+            (setq indent-tabs-mode t)
+            (setq-local copilot-indentation-offset 4)
             (company-mode)
             (add-to-list 'company-backends 'company-capf)))
 ;; (setq lsp-prefer-capf t)

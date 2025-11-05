@@ -11,9 +11,9 @@
        emmet-mode fish-mode go-mode gptel helm ini-mode irony
        jedi-core js2-mode js2-refactor json-mode lsp-mode
        lsp-sourcekit lsp-ui lua-mode magit mark-multiple mcp
-       nginx-mode nhexl-mode prettier-js projectile python-mode rustic
-       swift-mode tide tree-sitter tree-sitter-langs use-package
-       web-mode xref-js2 yaml-mode))
+       multiple-cursors nginx-mode nhexl-mode prettier-js projectile
+       python-mode rustic swift-mode tide tree-sitter
+       tree-sitter-langs use-package web-mode xref-js2 yaml-mode))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

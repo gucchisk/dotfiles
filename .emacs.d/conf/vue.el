@@ -21,7 +21,8 @@
         '(("vue" . "\\.vue\\'")))
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2))
+  (setq web-mode-code-indent-offset 2)
+  (setq-local copilot-infer-indentation-offset 2))
 
 ;; prettier-js
 (use-package prettier-js
@@ -38,11 +39,13 @@
   :config
   (exec-path-from-shell-initialize))
 
+;; (with-eval-after-load 'lsp-mode
+;;   (add-to-list 'lsp-language-id-configuration '(web-mode . "vue"))
+;;   (lsp-register-client
+;;    (make-lsp-client
+;;     :new-connection (lsp-stdio-connection '("vue-language-server" "--stdio"))
+;;     :major-modes '(web-mode)
+;;     :priority -1
+;;     :server-id 'volar)))
 (with-eval-after-load 'lsp-mode
-  (add-to-list 'lsp-language-id-configuration '(web-mode . "vue"))
-  (lsp-register-client
-   (make-lsp-client
-    :new-connection (lsp-stdio-connection '("vue-language-server" "--stdio"))
-    :major-modes '(web-mode)
-    :priority -1
-    :server-id 'volar)))
+  (setq lsp-clients-vue-server-command '("vue-language-server" "--stdio")))

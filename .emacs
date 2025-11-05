@@ -114,3 +114,6 @@
 
 ;;; gptel
 (load "gptel-conf")
+
+;;; multiple-cursors
+(load "mc")
