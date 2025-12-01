@@ -3,6 +3,14 @@
 (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
 (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
 
+;; for go-mode: インデント推測をオーバーライド
+(with-eval-after-load 'copilot
+  (defun copilot--infer-indentation-offset-advice (original-fn)
+    (if (derived-mode-p 'go-mode)
+        tab-width
+      (funcall original-fn)))
+  (advice-add 'copilot--infer-indentation-offset :around #'copilot--infer-indentation-offset-advice))
+
 ;; for elisp-mode
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()

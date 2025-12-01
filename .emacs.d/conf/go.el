@@ -10,14 +10,20 @@
 ;;; gopls
 ;; require `go install golang.org/x/tools/gopls@latest`
 (require 'lsp-mode)
+(with-eval-after-load 'lsp-mode
+  (define-key lsp-mode-map (kbd "C-;") nil))
 (add-hook 'go-mode-hook #'lsp-deferred)
-(add-hook 'go-mode-hook
-          (lambda ()
-            (setq tab-width 4)
-            (setq indent-tabs-mode t)
-            (setq-local copilot-indentation-offset 4)
-            (company-mode)
-            (add-to-list 'company-backends 'company-capf)))
+(defun my-go-mode-setup ()
+  (setq-local tab-width 4)
+  (setq-local indent-tabs-mode t)
+  ;; Copilotのインデント推測を無効化して明示的に設定
+  (when (fboundp 'copilot-mode)
+    (setq-local copilot-indent-offset-alist nil)
+    (setq-local copilot-indent-offset 4))
+  (company-mode)
+  (add-to-list 'company-backends 'company-capf))
+
+(add-hook 'go-mode-hook #'my-go-mode-setup)
 ;; (setq lsp-prefer-capf t)
 
 ;; Set up before-save hooks to format buffer and add/delete imports.
