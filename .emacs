@@ -117,3 +117,6 @@
 
 ;;; multiple-cursors
 (load "mc")
+
+;; jq
+(load "jq")
