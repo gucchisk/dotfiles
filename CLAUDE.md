@@ -53,6 +53,7 @@ Emacs設定はモジュラーアーキテクチャに従っています：
 ## 言語固有の設定
 
 ### Go開発
+- `go.el`に設定
 - LSPモード経由で`gopls`を使用（`go install golang.org/x/tools/gopls@latest`が必要）
 - タブ幅：4スペース（実際はタブ、`indent-tabs-mode t`）
 - 保存時に`lsp-format-buffer`と`lsp-organize-imports`で自動フォーマット
@@ -60,6 +61,7 @@ Emacs設定はモジュラーアーキテクチャに従っています：
 - `lsp-conf.el`でキーバインド定義：M-.（定義）、M-/（参照）
 
 ### TypeScript/JavaScript
+- `typescript.el`に設定
 - TypeScriptは`typescript-ts-mode`でTideモードを使用
 - インデントサイズ：2スペース
 - 保存前に自動フォーマット
@@ -71,6 +73,10 @@ Emacs設定はモジュラーアーキテクチャに従っています：
 ### C++
 - `cpp.el`に設定
 
+### jq
+- `jq.ml`に設定
+- Copilotにインデント幅を理解させる設定
+
 ### その他の言語
 - PHP: `php-conf.el`
 - Swift: `swift.el`
@@ -80,6 +86,7 @@ Emacs設定はモジュラーアーキテクチャに従っています：
 ## AI/生産性ツール
 
 ### Copilot統合
+- `github-copilot.el`に設定
 - `prog-mode-hook`経由で全プログラミングモードで有効
 - Tabキーで補完を受け入れ
 - Copilot Chatのキーバインド：
@@ -94,6 +101,7 @@ Emacs設定はモジュラーアーキテクチャに従っています：
 - markdown-modeで`C-c C-c`によりAIに送信
 
 ### Multiple Cursors
+- `mc.el`に設定
 - `C-;`: 次の同じシンボルをマーク
 - `C-M-;`: 次の同じものをスキップ
 - `C-l`: 前の同じシンボルをマーク
