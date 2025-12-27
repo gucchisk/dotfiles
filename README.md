@@ -17,3 +17,6 @@
 - tango-dark
     - default installed theme
 	- `(load-theme 'tango-dark t)`
+
+- install packages from .emacs.d/custom.el
+    - `M-x package-install-selected-packages`
