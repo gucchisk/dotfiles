@@ -5,9 +5,9 @@
  ;; If there is more than one, they won't work right.
  '(js-indent-level 2)
  '(package-selected-packages
-    '(ac-php ag cmake-ide company company-go company-irony
-       company-irony-c-headers company-jedi company-php copilot
-       copilot-chat dash-at-point dockerfile-mode editorconfig
+    '(ac-php ag claude-code clipetty cmake-ide company company-go
+       company-irony company-irony-c-headers company-jedi company-php
+       copilot copilot-chat dash-at-point dockerfile-mode editorconfig
        emmet-mode fish-mode go-mode gptel helm ini-mode irony
        jedi-core jq-mode js2-mode js2-refactor json-mode lsp-mode
        lsp-sourcekit lsp-ui lua-mode magit mark-multiple mcp
