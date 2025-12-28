@@ -103,6 +103,9 @@
 ;;; shell
 (load "sh")
 
+;;; vterm
+(load "vterm-conf")
+
 ;;; copilot
 (load "github-copilot")
 
@@ -120,3 +123,6 @@
 
 ;; jq
 (load "jq")
+
+;; claude
+(load "claude")
