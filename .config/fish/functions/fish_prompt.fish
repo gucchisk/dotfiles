@@ -902,14 +902,14 @@ function __bobthefish_prompt_golang -S -a real_pwd -d 'Display current Go inform
     end
 
     echo -ns $go_glyph
-    echo -ns "$gomod_version "
+    echo -ns "go$gomod_version "
 
     # showing the prompt -- but plain ( for 'yes' ) or verbose?
     if  [ "$theme_display_go" = "verbose" ]
         if [ "$actual_go_version" != "0" ]
             # show the prompt with the required version AND the currently available
             # version; same color rules as above
-            echo -ns " ($actual_go_version)"
+            echo -ns "($actual_go_version)"
         end
     end
 end
