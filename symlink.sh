@@ -2,7 +2,7 @@
 
 homedir=$(cd $(dirname $0); pwd)
 dotfilelist=(.emacs .emacs.d/elisp .emacs.d/conf .gitconfig .emacs.d/custom.el .claude/scripts)
-dotfiledirlist=(.config/fish/functions .config/fish/conf.d)
+dotfiledirlist=(.config/fish/functions .config/fish/conf.d .claude/commands)
 
 for dir in ${dotfiledirlist[@]}; do
   files=$(ls $dir)
