@@ -20,3 +20,10 @@
 
 - install packages from .emacs.d/custom.el
     - `M-x package-install-selected-packages`
+
+## Requirement
+
+- terminal-notifier
+    ```
+    $ brew install terminal-notifier
+    ```
