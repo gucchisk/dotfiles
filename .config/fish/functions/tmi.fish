@@ -1,4 +1,4 @@
-function tmi
+function tmi -d 'Create new iTerm2 window and attach to or create tmux session with iTerm2 integration'
   set session_name (basename $PWD)
   set current_dir $PWD
   osascript \
