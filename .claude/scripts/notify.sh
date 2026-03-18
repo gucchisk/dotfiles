@@ -8,6 +8,7 @@ MESSAGE=$(echo "$INPUT" | jq -r '.message // "入力待ち"')
 if [ -n "$TMUX" ]; then
   TMUX_SESSION=$(tmux display-message -p '#S')
   TMUX_WINDOW=$(tmux display-message -p '#I')
+  TMUX_WINDOW_NAME=$(tmux display-message -p '#W')
 
   # tmux情報をファイルに保存（switch_tmux.shが読み込む）
   CURRENT_DIR=$(basename "$PWD")
@@ -15,6 +16,7 @@ if [ -n "$TMUX" ]; then
   cat > /tmp/claude_tmux_target << EOF
 TMUX_TARGET_SESSION="${TMUX_SESSION}"
 TMUX_TARGET_WINDOW="${TMUX_WINDOW}"
+TMUX_TARGET_WINDOW_NAME="${TMUX_WINDOW_NAME}"
 TMUX_TARGET_DIR="${CURRENT_DIR}"
 EOF
 
