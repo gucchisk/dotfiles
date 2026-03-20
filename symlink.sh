@@ -21,7 +21,10 @@ done
 
 # cage
 if [[ "$(uname -s)" == "Darwin" ]]; then
-  ln -s $homedir/cage $HOME/Library/Application\ Support/cage
+  cagedir="$HOME/Library/Application Support/cage"
 elif [[ "$(uname -s)" == "Linux" ]]; then
-  ln -s $homedir/cage $HOME/.config/cage
+  cagedir="$HOME/.config/cage"
+fi
+if [ ! -L "$cagedir" ]; then
+  ln -s "$homedir/cage" "$cagedir"
 fi
