@@ -18,3 +18,13 @@ for file in ${dotfilelist[@]}; do
     ln -s $src $dist
   fi
 done
+
+# cage
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  cagedir="$HOME/Library/Application Support/cage"
+elif [[ "$(uname -s)" == "Linux" ]]; then
+  cagedir="$HOME/.config/cage"
+fi
+if [ ! -L "$cagedir" ]; then
+  ln -s "$homedir/cage" "$cagedir"
+fi
