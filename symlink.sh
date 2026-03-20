@@ -18,3 +18,10 @@ for file in ${dotfilelist[@]}; do
     ln -s $src $dist
   fi
 done
+
+# cage
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  ln -s $homedir/cage $HOME/Library/Application\ Support/cage
+elif [[ "$(uname -s)" == "Linux" ]]; then
+  ln -s $homedir/cage $HOME/.config/cage
+fi
