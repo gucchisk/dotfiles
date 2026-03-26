@@ -3,6 +3,7 @@
    br = branch
    ci = commit
    co = checkout
+   sw = switch
    stashl = stash list
    stasha = stash apply
    stashp = stash pop
