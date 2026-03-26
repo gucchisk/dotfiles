@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Read"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/*.key)",
+      "Read(**/*.pem)",
+      "Bash(sudo *)",
+      "Bash(rm *)",
+      "Bash(rm -rf *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(git push *)",
+      "Bash(git push --force *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(chmod 777 *)",
+    ],
+    "defaultMode": "bypassPermissions"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/notify.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "language": "japanese",
+  "teammateMode": "tmux",
+  "alwaysThinkingEnables": false
+}
