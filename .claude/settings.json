@@ -17,7 +17,7 @@
       "Bash(git push --force *)",
       "Bash(ssh *)",
       "Bash(scp *)",
-      "Bash(chmod 777 *)",
+      "Bash(chmod 777 *)"
     ],
     "defaultMode": "bypassPermissions"
   },
