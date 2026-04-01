@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+if ! command -v jq &> /dev/null; then
+  echo "Error: jq is required but not installed." >&2
+  exit 1
+fi
+
+cd "$(dirname "$0")" || exit 1
+mkdir -p ~/.claude
+
 if [ -f ~/.claude/settings.local.json ]; then
   jq -s '
 def merge:
