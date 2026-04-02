@@ -28,11 +28,13 @@ presets:
 
   maven:
     allow:
-      - "$HOME/.m2"
+      - "$HOME/.m2/repository"
+      - "$HOME/.m2/wrapper"
 
   go:
     allow:
-      - "$HOME/go"
+      - "$HOME/go/pkg/mod"
+      - "$HOME/go/bin"
 
 auto-presets:
   - command: claude
