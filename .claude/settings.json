@@ -3,6 +3,9 @@
     "allow": [
       "Read"
     ],
+    "ask": [
+      "Bash(git push *)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
@@ -13,7 +16,6 @@
       "Bash(rm -rf *)",
       "Bash(curl *)",
       "Bash(wget *)",
-      "Bash(git push *)",
       "Bash(git push --force *)",
       "Bash(ssh *)",
       "Bash(scp *)",
