@@ -26,9 +26,21 @@ presets:
       - "$HOME/.claude.json.lock"
       - "$HOME/.claude.lock"
 
+  maven:
+    allow:
+      - "$HOME/.m2/repository"
+      - "$HOME/.m2/wrapper"
+
+  go:
+    allow:
+      - "$HOME/go/pkg/mod"
+      - "$HOME/go/bin"
+
 auto-presets:
   - command: claude
     presets:
       - base
       - git-enabled
       - claude-code
+      - maven
+      - go
