@@ -38,5 +38,10 @@
   },
   "language": "japanese",
   "teammateMode": "tmux",
-  "alwaysThinkingEnables": false
+  "alwaysThinkingEnables": false,
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccusage statusline",
+    "padding": 0
+  }
 }
