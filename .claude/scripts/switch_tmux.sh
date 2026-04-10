@@ -6,10 +6,12 @@ echo "=== $(date) ===" >> "$LOG_FILE"
 
 # tmux情報ファイルから読み込み
 if [ -f /tmp/claude_tmux_target ]; then
+  # shellcheck source=/dev/null
   source /tmp/claude_tmux_target
   echo "Target: ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" >> "$LOG_FILE"
 
   if pgrep -x "iTerm2" > /dev/null; then
+    # shellcheck disable=SC2129
     echo "Using iTerm2" >> "$LOG_FILE"
     # iTerm2の場合 - ウィンドウ名またはディレクトリ名でtmuxタブを特定
     osascript <<EOF >> "$LOG_FILE" 2>&1

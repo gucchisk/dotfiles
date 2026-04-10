@@ -8,6 +8,8 @@ fi
 cd "$(dirname "$0")" || exit 1
 mkdir -p ~/.claude
 
+tmp_file=$(mktemp)
+
 if [ -f ~/.claude/settings.local.json ]; then
   if jq -s '
 def merge:
