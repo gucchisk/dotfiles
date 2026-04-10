@@ -23,7 +23,7 @@ def merge:
     )
   );
 merge
-' .claude/settings.json ~/.claude/settings.local.json > ~/.claude/settings.json
+' .claude/settings.json.base ~/.claude/settings.local.json > ~/.claude/settings.json
 else
-  cp .claude/settings.json ~/.claude/settings.json
+  cp .claude/settings.json.base ~/.claude/settings.json
 fi
