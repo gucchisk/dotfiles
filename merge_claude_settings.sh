@@ -9,7 +9,8 @@ cd "$(dirname "$0")" || exit 1
 mkdir -p ~/.claude
 
 if [ -f ~/.claude/settings.local.json ]; then
-  jq -s '
+  tmp_file=$(mktemp)
+  if jq -s '
 def merge:
   reduce .[] as $item ({}; 
     reduce ($item | keys_unsorted[]) as $key (.;
@@ -23,7 +24,13 @@ def merge:
     )
   );
 merge
-' .claude/settings.json ~/.claude/settings.local.json > ~/.claude/settings.json
+' .claude/settings.json.base ~/.claude/settings.local.json > "$tmp_file"; then
+    mv "$tmp_file" ~/.claude/settings.json
+  else
+    rm -f "$tmp_file"
+    echo "Error: failed to merge Claude settings." >&2
+    exit 1
+  fi
 else
-  cp .claude/settings.json ~/.claude/settings.json
+  cp .claude/settings.json.base ~/.claude/settings.json
 fi
