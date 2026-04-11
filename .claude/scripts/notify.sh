@@ -16,7 +16,6 @@ if [ -n "$TMUX" ]; then
 
   # このtmuxセッションに接続しているクライアントのTTYを取得（iTerm2とのマッチングに使用）
   TMUX_CLIENT_TTY=$(tmux list-clients -t "${TMUX_SESSION}:" -F '#{client_tty}' 2>/dev/null | head -1)
-
   cat > "$TARGET_FILE" << EOF
 TMUX_TARGET_SESSION="${TMUX_SESSION}"
 TMUX_TARGET_WINDOW="${TMUX_WINDOW}"
