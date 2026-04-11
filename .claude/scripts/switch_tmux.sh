@@ -52,6 +52,9 @@ EOF
 )
     echo "AppleScript result: $APPLESCRIPT_RESULT" >> "$LOG_FILE"
 
+    # 使用済みのターゲットファイルを削除
+    rm -f "$TARGET_FILE"
+
     # tmuxのウィンドウも切り替え（フルパス指定でPATH問題を回避）
     TMUX_BIN="/opt/homebrew/bin/tmux"
     if [ ! -x "$TMUX_BIN" ]; then
@@ -77,6 +80,7 @@ tell application "Terminal"
     do script "${TMUX_BIN} select-window -t ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" in front window
 end tell
 EOF
+    rm -f "$TARGET_FILE"
   fi
 else
   echo "No target file found: $TARGET_FILE" >> "$LOG_FILE"
