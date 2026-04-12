@@ -25,7 +25,7 @@ on run argv
   set targetDir to item 3 of argv
 
   tell application "iTerm2"
-    -- まずTTYで直接マッチング（tmuxクライアントとiTerm2セッションを紐付ける最も確実な方法）
+    -- TTYで直接マッチング（tmuxクライアントとiTerm2セッションを紐付ける最も確実な方法）
     if targetTty is not "" then
       set winIdx to 0
       repeat with w in windows
@@ -42,9 +42,11 @@ on run argv
           end repeat
         end repeat
       end repeat
+      -- TTYが指定されていたが見つからなかった場合はリトライのため失敗を返す
+      return "tty_not_found"
     end if
 
-    -- フォールバック: タブ名によるマッチング
+    -- TTYが未指定の場合のみ: タブ名によるマッチング
     set winIdx to 0
     repeat with w in windows
       set winIdx to winIdx + 1
@@ -68,20 +70,25 @@ EOF
 )
     echo "AppleScript result: $APPLESCRIPT_RESULT" >> "$LOG_FILE"
 
-    # 使用済みのターゲットファイルを削除
-    rm -f "$TARGET_FILE"
-
-    # tmuxのウィンドウも切り替え（フルパス指定でPATH問題を回避）
-    TMUX_BIN="/opt/homebrew/bin/tmux"
-    if [ ! -x "$TMUX_BIN" ]; then
-      TMUX_BIN="/usr/local/bin/tmux"
-    fi
-    if [ -x "$TMUX_BIN" ]; then
-      echo "Executing tmux select-window..." >> "$LOG_FILE"
-      "$TMUX_BIN" select-window -t "${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" 2>> "$LOG_FILE"
-      echo "Tmux window switched!" >> "$LOG_FILE"
+    # TTYが指定されていたが見つからなかった場合はTARGET_FILEを保持してリトライを可能にする
+    if [ "$APPLESCRIPT_RESULT" = "tty_not_found" ]; then
+      echo "TTY not found, keeping target file for retry" >> "$LOG_FILE"
     else
-      echo "tmux not found" >> "$LOG_FILE"
+      # 成功またはTTY未指定の場合のみターゲットファイルを削除してtmuxウィンドウを切り替える
+      rm -f "$TARGET_FILE"
+
+      # tmuxのウィンドウも切り替え（フルパス指定でPATH問題を回避）
+      TMUX_BIN="/opt/homebrew/bin/tmux"
+      if [ ! -x "$TMUX_BIN" ]; then
+        TMUX_BIN="/usr/local/bin/tmux"
+      fi
+      if [ -x "$TMUX_BIN" ]; then
+        echo "Executing tmux select-window..." >> "$LOG_FILE"
+        "$TMUX_BIN" select-window -t "${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" 2>> "$LOG_FILE"
+        echo "Tmux window switched!" >> "$LOG_FILE"
+      else
+        echo "tmux not found" >> "$LOG_FILE"
+      fi
     fi
   else
     echo "Using Terminal.app" >> "$LOG_FILE"
