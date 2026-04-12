@@ -14,11 +14,15 @@ if [ -n "$TMUX" ]; then
   CURRENT_DIR=$(basename "$PWD")
   TARGET_FILE="/tmp/claude_tmux_target_${TMUX_SESSION}_${TMUX_WINDOW}"
 
+  # このtmuxセッションに接続しているクライアントのTTYを取得（iTerm2とのマッチングに使用）
+  TMUX_CLIENT_TTY=$(tmux list-clients -t "${TMUX_SESSION}:" -F '#{client_tty}' 2>/dev/null | head -1)
+
   cat > "$TARGET_FILE" << EOF
 TMUX_TARGET_SESSION="${TMUX_SESSION}"
 TMUX_TARGET_WINDOW="${TMUX_WINDOW}"
 TMUX_TARGET_WINDOW_NAME="${TMUX_WINDOW_NAME}"
 TMUX_TARGET_DIR="${CURRENT_DIR}"
+TMUX_CLIENT_TTY="${TMUX_CLIENT_TTY}"
 EOF
 
   # iTerm2とTerminal.appの判定
@@ -28,6 +32,7 @@ EOF
     BUNDLE_ID="com.apple.Terminal"
   fi
 
+  EXEC_CMD=$(printf '%q %q' "$HOME/.claude/scripts/switch_tmux.sh" "$TARGET_FILE")
   # terminal-notifierで通知を表示
   # 通知クリック時にswitch_tmux.shを実行（対象ファイルパスを引数で渡す）
   terminal-notifier \
@@ -35,7 +40,7 @@ EOF
     -message "$MESSAGE" \
     -sound "Glass" \
     -activate "$BUNDLE_ID" \
-    -execute "$HOME/.claude/scripts/switch_tmux.sh $TARGET_FILE"
+    -execute "$EXEC_CMD"
 else
   # tmux外の場合は通常の通知のみ
   BUNDLE_ID="com.googlecode.iterm2"

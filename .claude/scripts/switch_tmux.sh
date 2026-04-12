@@ -12,42 +12,58 @@ echo "Target file: $TARGET_FILE" >> "$LOG_FILE"
 if [ -f "$TARGET_FILE" ]; then
   # shellcheck source=/dev/null
   source "$TARGET_FILE"
-  echo "Target: ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" >> "$LOG_FILE"
+  echo "Target: ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}, TTY: ${TMUX_CLIENT_TTY}" >> "$LOG_FILE"
 
   if pgrep -x "iTerm2" > /dev/null; then
     echo "Using iTerm2" >> "$LOG_FILE"
 
-    # iTerm2の場合 - current tab は read-only のため select コマンドでタブを切り替える
-    APPLESCRIPT_RESULT=$(osascript 2>&1 <<EOF
-tell application "iTerm2"
-  set targetTabIdx to -1
-  set targetWinIdx to -1
-  set winIdx to 0
+    # iTerm2の場合 - TTYマッチングを優先し、フォールバックとして名前マッチングを使用
+    APPLESCRIPT_RESULT=$(osascript 2>&1 - "$TMUX_CLIENT_TTY" "$TMUX_TARGET_WINDOW_NAME" "$TMUX_TARGET_DIR" <<'EOF'
+on run argv
+  set targetTty to item 1 of argv
+  set targetWindowName to item 2 of argv
+  set targetDir to item 3 of argv
 
-  repeat with w in windows
-    set winIdx to winIdx + 1
-    set tabIdx to 0
-    repeat with t in tabs of w
-      set tabIdx to tabIdx + 1
-      set sessionName to name of current session of t
-      if sessionName contains "${TMUX_TARGET_WINDOW_NAME}" or (sessionName contains "tmux" and sessionName contains "${TMUX_TARGET_DIR}") then
-        set targetTabIdx to tabIdx
-        set targetWinIdx to winIdx
-        exit repeat
-      end if
+  tell application "iTerm2"
+    -- まずTTYで直接マッチング（tmuxクライアントとiTerm2セッションを紐付ける最も確実な方法）
+    if targetTty is not "" then
+      set winIdx to 0
+      repeat with w in windows
+        set winIdx to winIdx + 1
+        set tabIdx to 0
+        repeat with t in tabs of w
+          set tabIdx to tabIdx + 1
+          repeat with s in sessions of t
+            if tty of s is targetTty then
+              select tab tabIdx of window winIdx
+              activate
+              return "switched by TTY to tab " & tabIdx & " of window " & winIdx
+            end if
+          end repeat
+        end repeat
+      end repeat
+    end if
+
+    -- フォールバック: タブ名によるマッチング
+    set winIdx to 0
+    repeat with w in windows
+      set winIdx to winIdx + 1
+      set tabIdx to 0
+      repeat with t in tabs of w
+        set tabIdx to tabIdx + 1
+        set sessionName to name of current session of t
+        if sessionName contains targetWindowName or (sessionName contains "tmux" and sessionName contains targetDir) then
+          select tab tabIdx of window winIdx
+          activate
+          return "switched by name to tab " & tabIdx & " of window " & winIdx
+        end if
+      end repeat
     end repeat
-    if targetTabIdx is not -1 then exit repeat
-  end repeat
 
-  if targetTabIdx is not -1 then
-    select tab targetTabIdx of window targetWinIdx
-    activate
-    return "switched to tab " & targetTabIdx & " of window " & targetWinIdx
-  else
     activate
     return "no matching tab found"
-  end if
-end tell
+  end tell
+end run
 EOF
 )
     echo "AppleScript result: $APPLESCRIPT_RESULT" >> "$LOG_FILE"
