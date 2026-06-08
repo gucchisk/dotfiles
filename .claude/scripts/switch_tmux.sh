@@ -24,47 +24,59 @@ on run argv
   set targetWindowName to item 2 of argv
   set targetDir to item 3 of argv
 
+  set foundWin to 0
+  set foundTab to 0
+
   tell application "iTerm2"
-    -- TTYで直接マッチング（tmuxクライアントとiTerm2セッションを紐付ける最も確実な方法）
+    set winCount to count of windows
+    -- TTYで直接マッチング
     if targetTty is not "" then
-      set winIdx to 0
-      repeat with w in windows
-        set winIdx to winIdx + 1
-        set tabIdx to 0
-        repeat with t in tabs of w
-          set tabIdx to tabIdx + 1
-          repeat with s in sessions of t
-            if tty of s is targetTty then
-              select tab tabIdx of window winIdx
-              activate
-              return "switched by TTY to tab " & tabIdx & " of window " & winIdx
+      repeat with i from 1 to winCount
+        set tabCount to count of tabs of window i
+        repeat with j from 1 to tabCount
+          set sessionCount to count of sessions of tab j of window i
+          repeat with k from 1 to sessionCount
+            if tty of session k of tab j of window i is targetTty then
+              set foundWin to i
+              set foundTab to j
             end if
           end repeat
         end repeat
       end repeat
-      -- TTYが指定されていたが見つからなかった場合はリトライのため失敗を返す
-      return "tty_not_found"
     end if
 
-    -- TTYが未指定の場合のみ: タブ名によるマッチング
-    set winIdx to 0
-    repeat with w in windows
-      set winIdx to winIdx + 1
-      set tabIdx to 0
-      repeat with t in tabs of w
-        set tabIdx to tabIdx + 1
-        set sessionName to name of current session of t
-        if sessionName contains targetWindowName or (sessionName contains "tmux" and sessionName contains targetDir) then
-          select tab tabIdx of window winIdx
-          activate
-          return "switched by name to tab " & tabIdx & " of window " & winIdx
-        end if
+    -- TTYが見つからない場合: タブ名によるマッチング
+    if foundWin is 0 then
+      repeat with i from 1 to winCount
+        set tabCount to count of tabs of window i
+        repeat with j from 1 to tabCount
+          set sessionName to name of current session of tab j of window i
+          if sessionName contains targetWindowName or (sessionName contains "tmux" and sessionName contains targetDir) then
+            set foundWin to i
+            set foundTab to j
+          end if
+        end repeat
       end repeat
-    end repeat
+    end if
+
+    if foundWin is 0 then
+      activate
+      return "no matching tab found"
+    end if
 
     activate
-    return "no matching tab found"
   end tell
+
+  -- set current tab が iTerm2 3.6では使えないため、
+  -- System Events のキーストローク (Cmd+タブ番号) でタブを切り替える
+  delay 0.3
+  tell application "System Events"
+    tell process "iTerm2"
+      keystroke (foundTab as string) using command down
+    end tell
+  end tell
+
+  return "switched win=" & foundWin & " tab=" & foundTab
 end run
 EOF
 )

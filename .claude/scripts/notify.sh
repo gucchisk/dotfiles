@@ -31,7 +31,8 @@ EOF
     BUNDLE_ID="com.apple.Terminal"
   fi
 
-  EXEC_CMD=$(printf '%q %q' "$HOME/.claude/scripts/switch_tmux.sh" "$TARGET_FILE")
+  EXEC_CMD="/bin/bash ${HOME}/.claude/scripts/switch_tmux.sh ${TARGET_FILE}"
+  echo "$(date): notify.sh sending notification, EXEC_CMD=$EXEC_CMD" >> /tmp/claude_switch_debug.log
   # terminal-notifierで通知を表示
   # 通知クリック時にswitch_tmux.shを実行（対象ファイルパスを引数で渡す）
   terminal-notifier \
