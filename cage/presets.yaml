@@ -26,6 +26,11 @@ presets:
       - "$HOME/.claude.json.lock"
       - "$HOME/.claude.lock"
 
+  codex:
+    allow:
+      - "$CODEX_HOME"
+      - "$HOME/.codex"
+
   maven:
     allow:
       - "$HOME/.m2/repository"
@@ -42,5 +47,12 @@ auto-presets:
       - base
       - git-enabled
       - claude-code
+      - maven
+      - go
+  - command: codex
+    presets:
+      - base
+      - git-enabled
+      - codex
       - maven
       - go
