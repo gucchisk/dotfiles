@@ -6,13 +6,22 @@ MESSAGE=$(echo "$INPUT" | jq -r '.message // "入力待ち"')
 
 # 現在のtmux情報を取得
 if [ -n "$TMUX" ]; then
-  TMUX_SESSION=$(tmux display-message -p '#S')
-  TMUX_WINDOW=$(tmux display-message -p '#I')
-  TMUX_WINDOW_NAME=$(tmux display-message -p '#W')
+  # -t を付けずにdisplay-messageを呼ぶと「クライアントが今表示しているpane」が返るため、
+  # ユーザーが別ウィンドウを見ている間に通知が出ると誤ったウィンドウが記録されてしまう。
+  # フックが継承している $TMUX_PANE を明示指定して、Claude Codeが動いているpaneを確実に指す。
+  TMUX_TARGET_SPEC="${TMUX_PANE:-}"
+  if [ -n "$TMUX_TARGET_SPEC" ]; then
+    TMUX_INFO=$(tmux display-message -p -t "$TMUX_TARGET_SPEC" '#S'$'\t''#I'$'\t''#W'$'\t''#D')
+  else
+    TMUX_INFO=$(tmux display-message -p '#S'$'\t''#I'$'\t''#W'$'\t''#D')
+  fi
+  IFS=$'\t' read -r TMUX_SESSION TMUX_WINDOW TMUX_WINDOW_NAME TMUX_PANE_ID <<< "$TMUX_INFO"
 
-  # tmux情報をセッション+ウィンドウごとに一意なファイルに保存（switch_tmux.shが読み込む）
+  # tmux情報をpaneごとに一意なファイルに保存（switch_tmux.shが読み込む）
+  # ウィンドウ番号は変動するのでファイル名にも不変なpane IDを使う
   CURRENT_DIR=$(basename "$PWD")
-  TARGET_FILE="/tmp/claude_tmux_target_${TMUX_SESSION}_${TMUX_WINDOW}"
+  PANE_ID_SUFFIX="${TMUX_PANE_ID#%}"
+  TARGET_FILE="/tmp/claude_tmux_target_${TMUX_SESSION}_pane${PANE_ID_SUFFIX}"
 
   # このtmuxセッションに接続しているクライアントのTTYを取得（iTerm2とのマッチングに使用）
   TMUX_CLIENT_TTY=$(tmux list-clients -t "${TMUX_SESSION}:" -F '#{client_tty}' 2>/dev/null | head -1)
@@ -20,6 +29,7 @@ if [ -n "$TMUX" ]; then
 TMUX_TARGET_SESSION="${TMUX_SESSION}"
 TMUX_TARGET_WINDOW="${TMUX_WINDOW}"
 TMUX_TARGET_WINDOW_NAME="${TMUX_WINDOW_NAME}"
+TMUX_TARGET_PANE="${TMUX_PANE_ID}"
 TMUX_TARGET_DIR="${CURRENT_DIR}"
 TMUX_CLIENT_TTY="${TMUX_CLIENT_TTY}"
 EOF
@@ -42,16 +52,31 @@ EOF
     -activate "$BUNDLE_ID" \
     -execute "$EXEC_CMD"
 else
-  # tmux外の場合は通常の通知のみ
-  BUNDLE_ID="com.googlecode.iterm2"
-  if pgrep -x "Terminal" > /dev/null; then
+  # tmux外の場合: iTerm2のセッションIDでタブを特定して切り替える
+  ITERM_UUID="${ITERM_SESSION_ID#*:}"
+  TARGET_FILE="/tmp/claude_tmux_target_itermsession_${ITERM_UUID}"
+  cat > "$TARGET_FILE" << EOF
+TMUX_TARGET_SESSION=""
+TMUX_TARGET_WINDOW=""
+TMUX_TARGET_WINDOW_NAME=""
+TMUX_TARGET_DIR=""
+TMUX_CLIENT_TTY=""
+ITERM_SESSION_UUID="${ITERM_UUID}"
+EOF
+
+  if pgrep -x "iTerm2" > /dev/null; then
+    BUNDLE_ID="com.googlecode.iterm2"
+  else
     BUNDLE_ID="com.apple.Terminal"
   fi
+
+  EXEC_CMD="/bin/bash ${HOME}/.claude/scripts/switch_tmux.sh ${TARGET_FILE}"
   terminal-notifier \
     -title "Claude Code" \
     -message "$MESSAGE" \
     -sound "Glass" \
-    -activate "$BUNDLE_ID"
+    -activate "$BUNDLE_ID" \
+    -execute "$EXEC_CMD"
 fi
 
 # tmux内でもメッセージを表示

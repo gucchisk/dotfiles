@@ -17,20 +17,37 @@ if [ -f "$TARGET_FILE" ]; then
   if pgrep -x "iTerm2" > /dev/null; then
     echo "Using iTerm2" >> "$LOG_FILE"
 
-    # iTerm2の場合 - TTYマッチングを優先し、フォールバックとして名前マッチングを使用
-    APPLESCRIPT_RESULT=$(osascript 2>&1 - "$TMUX_CLIENT_TTY" "$TMUX_TARGET_WINDOW_NAME" "$TMUX_TARGET_DIR" <<'EOF'
+    # iTerm2の場合 - セッションID(UUID)マッチングを最優先し、TTY、タブ名の順にフォールバック
+    APPLESCRIPT_RESULT=$(osascript 2>&1 - "$TMUX_CLIENT_TTY" "$TMUX_TARGET_WINDOW_NAME" "$TMUX_TARGET_DIR" "$ITERM_SESSION_UUID" <<'EOF'
 on run argv
   set targetTty to item 1 of argv
   set targetWindowName to item 2 of argv
   set targetDir to item 3 of argv
+  set targetUuid to item 4 of argv
 
   set foundWin to 0
   set foundTab to 0
 
   tell application "iTerm2"
     set winCount to count of windows
+    -- セッションID(UUID)で直接マッチング
+    if targetUuid is not "" then
+      repeat with i from 1 to winCount
+        set tabCount to count of tabs of window i
+        repeat with j from 1 to tabCount
+          set sessionCount to count of sessions of tab j of window i
+          repeat with k from 1 to sessionCount
+            if id of session k of tab j of window i is targetUuid then
+              set foundWin to i
+              set foundTab to j
+            end if
+          end repeat
+        end repeat
+      end repeat
+    end if
+
     -- TTYで直接マッチング
-    if targetTty is not "" then
+    if foundWin is 0 and targetTty is not "" then
       repeat with i from 1 to winCount
         set tabCount to count of tabs of window i
         repeat with j from 1 to tabCount
@@ -45,7 +62,7 @@ on run argv
       end repeat
     end if
 
-    -- TTYが見つからない場合: タブ名によるマッチング
+    -- 見つからない場合: タブ名によるマッチング
     if foundWin is 0 then
       repeat with i from 1 to winCount
         set tabCount to count of tabs of window i
@@ -64,6 +81,9 @@ on run argv
       return "no matching tab found"
     end if
 
+    -- 対象ウィンドウを最前面に出す（複数ウィンドウ環境で誤ったウィンドウのタブが
+    -- 切り替わってしまうのを防ぐため、activateだけに頼らず明示的に選択する）
+    set index of window foundWin to 1
     activate
   end tell
 
@@ -89,17 +109,28 @@ EOF
       # 成功またはTTY未指定の場合のみターゲットファイルを削除してtmuxウィンドウを切り替える
       rm -f "$TARGET_FILE"
 
-      # tmuxのウィンドウも切り替え（フルパス指定でPATH問題を回避）
-      TMUX_BIN="/opt/homebrew/bin/tmux"
-      if [ ! -x "$TMUX_BIN" ]; then
-        TMUX_BIN="/usr/local/bin/tmux"
-      fi
-      if [ -x "$TMUX_BIN" ]; then
-        echo "Executing tmux select-window..." >> "$LOG_FILE"
-        "$TMUX_BIN" select-window -t "${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" 2>> "$LOG_FILE"
-        echo "Tmux window switched!" >> "$LOG_FILE"
-      else
-        echo "tmux not found" >> "$LOG_FILE"
+      # tmux外(通常のiTermタブ)から発火した通知の場合はtmux切り替え不要
+      if [ -n "$TMUX_TARGET_SESSION" ]; then
+        # tmuxのウィンドウも切り替え（フルパス指定でPATH問題を回避）
+        TMUX_BIN="/opt/homebrew/bin/tmux"
+        if [ ! -x "$TMUX_BIN" ]; then
+          TMUX_BIN="/usr/local/bin/tmux"
+        fi
+        if [ -x "$TMUX_BIN" ]; then
+          # ウィンドウ番号は並び替え・削除で変動するため、不変のpane IDを優先して切り替える
+          if [ -n "$TMUX_TARGET_PANE" ] && "$TMUX_BIN" display-message -p -t "$TMUX_TARGET_PANE" '#D' > /dev/null 2>&1; then
+            SWITCH_TARGET="$TMUX_TARGET_PANE"
+          else
+            SWITCH_TARGET="${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}"
+          fi
+          echo "Executing tmux select-window (target=$SWITCH_TARGET)..." >> "$LOG_FILE"
+          "$TMUX_BIN" select-window -t "$SWITCH_TARGET" 2>> "$LOG_FILE"
+          # 同一ウィンドウ内に複数paneがある場合に該当paneへフォーカスを合わせる
+          "$TMUX_BIN" select-pane -t "$SWITCH_TARGET" 2>> "$LOG_FILE"
+          echo "Tmux window switched!" >> "$LOG_FILE"
+        else
+          echo "tmux not found" >> "$LOG_FILE"
+        fi
       fi
     fi
   else
