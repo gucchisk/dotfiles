@@ -10,8 +10,31 @@ echo "Target file: $TARGET_FILE" >> "$LOG_FILE"
 
 # tmux情報ファイルから読み込み
 if [ -f "$TARGET_FILE" ]; then
-  # shellcheck source=/dev/null
-  source "$TARGET_FILE"
+  # 状態ファイルはJSON。sourceで読み込むとファイルの中身がそのままシェルコードとして
+  # 実行されてしまうため、許可したキーだけをjqで取り出して変数に入れる。
+  STATE_TSV=$(jq -r '[.tmux_target_session,
+                      .tmux_target_window,
+                      .tmux_target_window_name,
+                      .tmux_target_pane,
+                      .tmux_target_dir,
+                      .tmux_client_tty,
+                      .iterm_session_uuid]
+                     | map(if type == "string" then . else "" end)
+                     | @tsv' "$TARGET_FILE" 2>> "$LOG_FILE")
+
+  if [ -z "$STATE_TSV" ]; then
+    echo "Invalid or unreadable state file: $TARGET_FILE" >> "$LOG_FILE"
+    exit 1
+  fi
+
+  IFS=$'\t' read -r TMUX_TARGET_SESSION \
+                   TMUX_TARGET_WINDOW \
+                   TMUX_TARGET_WINDOW_NAME \
+                   TMUX_TARGET_PANE \
+                   TMUX_TARGET_DIR \
+                   TMUX_CLIENT_TTY \
+                   ITERM_SESSION_UUID <<< "$STATE_TSV"
+
   echo "Target: ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}, TTY: ${TMUX_CLIENT_TTY}" >> "$LOG_FILE"
 
   if pgrep -x "iTerm2" > /dev/null; then
