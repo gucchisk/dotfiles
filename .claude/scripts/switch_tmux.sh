@@ -62,6 +62,9 @@ on run argv
 
   set foundWin to 0
   set foundTab to 0
+  -- タブ内が分割されている場合、一致したsessionを選ばないと別の分割にフォーカスが残るため
+  -- 何番目のsessionが一致したかも覚えておく
+  set foundSession to 0
 
   tell application "iTerm2"
     set winCount to count of windows
@@ -75,6 +78,7 @@ on run argv
             if id of session k of tab j of window i is targetUuid then
               set foundWin to i
               set foundTab to j
+              set foundSession to k
             end if
           end repeat
         end repeat
@@ -91,6 +95,7 @@ on run argv
             if tty of session k of tab j of window i is targetTty then
               set foundWin to i
               set foundTab to j
+              set foundSession to k
             end if
           end repeat
         end repeat
@@ -120,6 +125,16 @@ on run argv
     -- 切り替わってしまうのを防ぐため、activateだけに頼らず明示的に選択する）
     set index of window foundWin to 1
     activate
+
+    -- UUID/TTYで特定できた場合は、そのsession自体も選択する。
+    -- タブ選択とsession選択は独立しているため、これがないと分割タブでは
+    -- 通知元ではなく元々アクティブだった分割にフォーカスが残る。
+    -- タブ名マッチ(foundSessionが0)の場合は特定できていないので触らない。
+    if foundSession is not 0 then
+      try
+        select session foundSession of tab foundTab of window foundWin
+      end try
+    end if
   end tell
 
   -- set current tab が iTerm2 3.6では使えないため、
@@ -131,7 +146,7 @@ on run argv
     end tell
   end tell
 
-  return "switched win=" & foundWin & " tab=" & foundTab
+  return "switched win=" & foundWin & " tab=" & foundTab & " session=" & foundSession
 end run
 EOF
 )

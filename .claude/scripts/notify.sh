@@ -10,12 +10,22 @@ sanitize_path_component() {
 }
 
 # 状態ファイルは所有者だけがアクセスできるディレクトリに置く。
-# /tmp直下は他ユーザーが同名ファイルを先回りして作れてしまい、
-# 読み込み側が細工された内容を掴まされる余地が残るため使わない。
+# パスは予測可能なので、他ユーザーが先回りして用意したディレクトリを掴んでいないか
+# 使う前に確かめる。条件を満たさない場合は書き込まずに失敗させる。
 create_state_dir() {
   local state_dir="${TMPDIR:-/tmp}/claude-tmux-state"
-  mkdir -p "$state_dir"
-  chmod 700 "$state_dir"
+  mkdir -p "$state_dir" || return 1
+  chmod 700 "$state_dir" || return 1
+
+  # 実ディレクトリであること（シンボリックリンク経由で別の場所に書かされないため）
+  [ -d "$state_dir" ] && [ ! -L "$state_dir" ] || return 1
+
+  local owner_uid dir_perms
+  owner_uid=$(stat -f '%u' "$state_dir" 2>/dev/null) || return 1
+  dir_perms=$(stat -f '%Lp' "$state_dir" 2>/dev/null) || return 1
+  [ "$owner_uid" = "$(id -u)" ] || return 1
+  [ "$dir_perms" = "700" ] || return 1
+
   printf '%s' "$state_dir"
 }
 
@@ -49,11 +59,17 @@ if [ -n "$TMUX" ]; then
   # ウィンドウ番号は変動するのでファイル名にも不変なpane IDを使う
   CURRENT_DIR=$(basename "$PWD")
   PANE_ID_SUFFIX="${TMUX_PANE_ID#%}"
-  STATE_DIR=$(create_state_dir)
+  STATE_DIR=$(create_state_dir) || {
+    echo "$(date): notify.sh aborted, state dir is not usable" >> /tmp/claude_switch_debug.log
+    exit 1
+  }
   TARGET_FILE="${STATE_DIR}/target_$(sanitize_path_component "$TMUX_SESSION")_pane${PANE_ID_SUFFIX}.json"
 
-  # このtmuxセッションに接続しているクライアントのTTYを取得（iTerm2とのマッチングに使用）
-  TMUX_CLIENT_TTY=$(tmux list-clients -t "${TMUX_SESSION}:" -F '#{client_tty}' 2>/dev/null | head -1)
+  # このtmuxセッションに接続しているクライアントのTTYを取得（iTerm2とのマッチングに使用）。
+  # フックからは通知元のクライアントを直接特定できないため、同じセッションに複数の
+  # クライアントが繋がっている場合は最後に操作されたものを選ぶ。
+  TMUX_CLIENT_TTY=$(tmux list-clients -t "${TMUX_SESSION}:" -F '#{client_activity}'$'\t''#{client_tty}' 2>/dev/null \
+    | sort -rn | head -1 | cut -f2)
   write_state_file "$TARGET_FILE" "$(jq -n \
     --arg session "$TMUX_SESSION" \
     --arg window "$TMUX_WINDOW" \
@@ -89,7 +105,10 @@ if [ -n "$TMUX" ]; then
 else
   # tmux外の場合: iTerm2のセッションIDでタブを特定して切り替える
   ITERM_UUID="${ITERM_SESSION_ID#*:}"
-  STATE_DIR=$(create_state_dir)
+  STATE_DIR=$(create_state_dir) || {
+    echo "$(date): notify.sh aborted, state dir is not usable" >> /tmp/claude_switch_debug.log
+    exit 1
+  }
   TARGET_FILE="${STATE_DIR}/target_itermsession_$(sanitize_path_component "$ITERM_UUID").json"
   write_state_file "$TARGET_FILE" "$(jq -n --arg iterm_uuid "$ITERM_UUID" \
     '{tmux_target_session: "",
