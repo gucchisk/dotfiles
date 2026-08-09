@@ -8,6 +8,18 @@ echo "=== $(date) ===" >> "$LOG_FILE"
 TARGET_FILE="${1:-/tmp/claude_tmux_target}"
 echo "Target file: $TARGET_FILE" >> "$LOG_FILE"
 
+# 切り替え先を決める。ウィンドウ番号は並び替え・削除で変動するため、不変のpane IDを優先する。
+# display-messageは存在しないpaneを渡しても終了コード0を返してしまうので、
+# 実在するpane IDの一覧と突き合わせて判定する。
+resolve_switch_target() {
+  local tmux_bin="$1" pane_id="$2" session="$3" window="$4"
+  if [ -n "$pane_id" ] && "$tmux_bin" list-panes -a -F '#D' 2>/dev/null | grep -qxF "$pane_id"; then
+    printf '%s' "$pane_id"
+  else
+    printf '%s' "${session}:${window}"
+  fi
+}
+
 # tmux情報ファイルから読み込み
 if [ -f "$TARGET_FILE" ]; then
   # 状態ファイルはJSON。sourceで読み込むとファイルの中身がそのままシェルコードとして
@@ -140,12 +152,7 @@ EOF
           TMUX_BIN="/usr/local/bin/tmux"
         fi
         if [ -x "$TMUX_BIN" ]; then
-          # ウィンドウ番号は並び替え・削除で変動するため、不変のpane IDを優先して切り替える
-          if [ -n "$TMUX_TARGET_PANE" ] && "$TMUX_BIN" display-message -p -t "$TMUX_TARGET_PANE" '#D' > /dev/null 2>&1; then
-            SWITCH_TARGET="$TMUX_TARGET_PANE"
-          else
-            SWITCH_TARGET="${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}"
-          fi
+          SWITCH_TARGET=$(resolve_switch_target "$TMUX_BIN" "$TMUX_TARGET_PANE" "$TMUX_TARGET_SESSION" "$TMUX_TARGET_WINDOW")
           echo "Executing tmux select-window (target=$SWITCH_TARGET)..." >> "$LOG_FILE"
           "$TMUX_BIN" select-window -t "$SWITCH_TARGET" 2>> "$LOG_FILE"
           # 同一ウィンドウ内に複数paneがある場合に該当paneへフォーカスを合わせる
@@ -163,10 +170,13 @@ EOF
     if [ ! -x "$TMUX_BIN" ]; then
       TMUX_BIN="/usr/local/bin/tmux"
     fi
+    # iTerm2側と同じ判定で切り替え先を決める
+    SWITCH_TARGET=$(resolve_switch_target "$TMUX_BIN" "$TMUX_TARGET_PANE" "$TMUX_TARGET_SESSION" "$TMUX_TARGET_WINDOW")
+    echo "Executing tmux select-window (target=$SWITCH_TARGET)..." >> "$LOG_FILE"
     osascript 2>> "$LOG_FILE" <<EOF
 tell application "Terminal"
     activate
-    do script "${TMUX_BIN} select-window -t ${TMUX_TARGET_SESSION}:${TMUX_TARGET_WINDOW}" in front window
+    do script "${TMUX_BIN} select-window -t ${SWITCH_TARGET}; ${TMUX_BIN} select-pane -t ${SWITCH_TARGET}" in front window
 end tell
 EOF
     rm -f "$TARGET_FILE"
