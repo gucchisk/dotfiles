@@ -1,7 +1,7 @@
 #!/bin/bash
 
 homedir=$(cd "$(dirname "$0")" || exit; pwd)
-dotfilelist=(.emacs .emacs.d/elisp .emacs.d/conf .gitconfig .emacs.d/custom.el .claude/scripts .tmux.conf)
+dotfilelist=(.emacs .emacs.d/elisp .emacs.d/conf .gitconfig .emacs.d/custom.el .claude/scripts .tmux.conf .config/herdr/config.toml)
 dotfiledirlist=(.config/fish/functions .config/fish/conf.d)
 
 for dir in "${dotfiledirlist[@]}"; do

@@ -42,6 +42,39 @@ write_state_file() {
   mv -f "$tmp_file" "$target_file"
 }
 
+# 通知クリック時に前面へ出すアプリのbundle IDを判定する。
+# pgrepでのプロセス列挙はフックの実行環境（Herdr配下など）によっては
+# 権限やプロセスツリーの都合で失敗することがあるため、まず端末自身が
+# 設定するTERM_PROGRAMを信頼し、pgrepは補助的なフォールバックとして使う。
+detect_bundle_id() {
+  if [ "$TERM_PROGRAM" = "iTerm.app" ] || pgrep -x "iTerm2" > /dev/null 2>&1; then
+    printf 'com.googlecode.iterm2'
+  else
+    printf 'com.apple.Terminal'
+  fi
+}
+
+# Herdr (https://herdr.dev) 配下で実行されている場合。
+# Herdrは既存のiTerm2タブの中にTUIとして描画される独自マルチプレクサーで、
+# `herdr agent focus`は対象paneをherdr内部で選択状態にするだけでOSレベルの
+# タブ切り替えやウィンドウ前面化は行わない。そのためiTerm2のタブ選択自体は
+# 従来通りセッションUUID($ITERM_SESSION_ID)によるAppleScriptマッチングで行い、
+# 追加でherdr側のpane選択も合わせて行う。
+if [ "${HERDR_ENV:-}" = "1" ] && [ -n "${HERDR_PANE_ID:-}" ]; then
+  HERDR_BIN="${HERDR_BIN_PATH:-herdr}"
+  BUNDLE_ID=$(detect_bundle_id)
+  ITERM_UUID="${ITERM_SESSION_ID#*:}"
+  echo "$(date): notify.sh (herdr) BUNDLE_ID=$BUNDLE_ID PANE_ID=$HERDR_PANE_ID HERDR_BIN=$HERDR_BIN ITERM_UUID=$ITERM_UUID" >> /tmp/claude_switch_debug.log
+  EXEC_CMD="/bin/bash '${HOME}/.claude/scripts/herdr_focus.sh' '${HERDR_PANE_ID}' '${HERDR_BIN}' '${ITERM_UUID}'"
+  terminal-notifier \
+    -title "Claude Code" \
+    -message "$MESSAGE" \
+    -sound "Glass" \
+    -activate "$BUNDLE_ID" \
+    -execute "$EXEC_CMD"
+  exit 0
+fi
+
 # 現在のtmux情報を取得
 if [ -n "$TMUX" ]; then
   # -t を付けずにdisplay-messageを呼ぶと「クライアントが今表示しているpane」が返るため、
@@ -85,12 +118,7 @@ if [ -n "$TMUX" ]; then
       tmux_client_tty: $client_tty,
       iterm_session_uuid: ""}')"
 
-  # iTerm2とTerminal.appの判定
-  if pgrep -x "iTerm2" > /dev/null; then
-    BUNDLE_ID="com.googlecode.iterm2"
-  else
-    BUNDLE_ID="com.apple.Terminal"
-  fi
+  BUNDLE_ID=$(detect_bundle_id)
 
   EXEC_CMD="/bin/bash '${HOME}/.claude/scripts/switch_tmux.sh' '${TARGET_FILE}'"
   echo "$(date): notify.sh sending notification, EXEC_CMD=$EXEC_CMD" >> /tmp/claude_switch_debug.log
@@ -119,11 +147,7 @@ else
       tmux_client_tty: "",
       iterm_session_uuid: $iterm_uuid}')"
 
-  if pgrep -x "iTerm2" > /dev/null; then
-    BUNDLE_ID="com.googlecode.iterm2"
-  else
-    BUNDLE_ID="com.apple.Terminal"
-  fi
+  BUNDLE_ID=$(detect_bundle_id)
 
   EXEC_CMD="/bin/bash '${HOME}/.claude/scripts/switch_tmux.sh' '${TARGET_FILE}'"
   terminal-notifier \
