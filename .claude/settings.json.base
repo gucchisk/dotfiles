@@ -1,4 +1,38 @@
 {
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [
+        ".",
+        "~/.cache",
+        "~/.local/share",
+        "/tmp",
+        "/private/tmp",
+        "/var/folders",
+        "/Library/Caches",
+        "~/Library/Caches",
+        "~/.claude",
+        "~/.claude.json",
+        "~/.claude.json.backup",
+        "~/.claude.json.lock",
+        "~/.claude.lock",
+        "~/.serena",
+        ".serena",
+        "/dev/tty",
+        "~/.m2/repository",
+        "~/.m2/wrapper",
+        "~/go/pkg/mod",
+        "~/go/bin"
+      ]
+    },
+     "network": {
+      "allowedDomains": [
+        "api.github.com",
+        "*.githubusercontent.com",
+        "github.com"
+      ]
+    }
+  },
   "permissions": {
     "allow": [
       "Read"
