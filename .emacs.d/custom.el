@@ -4,18 +4,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(js-indent-level 2)
- '(package-selected-packages
-    '(ac-php ag claude-code clipetty cmake-ide company company-go
-       company-irony company-irony-c-headers company-jedi company-php
-       copilot copilot-chat dash-at-point dockerfile-mode editorconfig
-       emmet-mode fish-mode go-mode gptel helm ini-mode irony
-       jedi-core jq-mode js2-mode js2-refactor json-mode lsp-mode
-       lsp-sourcekit lsp-ui lua-mode magit mark-multiple mcp
-       multiple-cursors nginx-mode nhexl-mode prettier-js projectile
-       python-mode rustic swift-mode tide tree-sitter
-       tree-sitter-langs use-package web-mode xref-js2 yaml-mode))
+ '(package-selected-packages nil)
  '(package-vc-selected-packages
-   '((claude-code-ide :url
+   '((ghostel :url "https://github.com/dakra/ghostel" :lisp-dir "lisp")
+     (claude-code-ide :url
                       "https://github.com/manzaltu/claude-code-ide.el")))
  '(typescript-indent-level 2))
 (custom-set-faces
