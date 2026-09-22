@@ -126,3 +126,6 @@
 
 ;; claude
 (load "claude")
+
+;; magit
+(load "magit-conf")
