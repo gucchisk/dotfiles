@@ -14,6 +14,9 @@
        multiple-cursors nginx-mode nhexl-mode prettier-js projectile
        python-mode rustic swift-mode tide tree-sitter
        tree-sitter-langs use-package web-mode xref-js2 yaml-mode))
+ '(package-vc-selected-packages
+   '((claude-code-ide :url
+                      "https://github.com/manzaltu/claude-code-ide.el")))
  '(typescript-indent-level 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
