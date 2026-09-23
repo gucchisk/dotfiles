@@ -36,7 +36,7 @@ function fish_right_prompt -d 'Display right prompt on first line with newline c
         # Add timestamp
         if [ "$theme_display_date" != "no" ]
             set -q theme_date_format; or set -l theme_date_format "+%c"
-            set -l timestamp (date $theme_date_format)
+            set -l timestamp (LC_TIME=C date $theme_date_format)
             set right_prompt_content "$right_prompt_content $timestamp"
         end
 
@@ -77,7 +77,7 @@ function fish_right_prompt -d 'Display right prompt on first line with newline c
         if [ "$theme_display_date" != "no" ]
             set -q theme_date_format; or set -l theme_date_format "+%c"
             echo -n ' '
-            date $theme_date_format
+            LC_TIME=C date $theme_date_format
         end
 
         set_color normal
