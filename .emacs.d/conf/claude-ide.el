@@ -2,6 +2,9 @@
   :vc (:url "https://github.com/dakra/ghostel"
        :lisp-dir "lisp"
        :rev :newest)
+  :hook
+  ;; Hide line numbers enabled by global-display-line-numbers-mode
+  (ghostel-mode . (lambda () (display-line-numbers-mode -1)))
   :custom
   ;; Use arrow keys for window movement (windmove) instead of sending them to the terminal
   (ghostel-keymap-exceptions
