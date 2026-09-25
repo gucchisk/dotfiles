@@ -3,6 +3,9 @@
 ;; vterm package
 (use-package vterm
   :ensure t
+  :hook
+  ;; Hide line numbers enabled by global-display-line-numbers-mode
+  (vterm-mode . (lambda () (display-line-numbers-mode -1)))
   :config
   ;; Use arrow keys for window movement instead of cursor movement in vterm
   (define-key vterm-mode-map (kbd "<left>") 'windmove-left)
