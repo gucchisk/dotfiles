@@ -47,6 +47,7 @@
 
 ;;; theme
 (load-theme 'tango-dark t)
+(set-face-attribute 'default nil :background "#222222")
 
 ;;; .emacs symlink
 (setq vc-follow-symlinks t)
