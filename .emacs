@@ -131,3 +131,6 @@
 
 ;; magit
 (load "magit-conf")
+
+;; agent-shell
+(load "agent-shell-conf")

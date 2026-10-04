@@ -1,5 +1,10 @@
 (require 'copilot)
-(add-hook 'prog-mode-hook 'copilot-mode)
+;; with-temp-buffer 内でのフォント付け等で prog-mode が起動した場合は有効にしない
+(defun copilot-mode-enable-unless-temp-buffer ()
+  (unless (or (string-prefix-p " " (buffer-name))
+              (string-prefix-p "*temp*" (buffer-name)))
+    (copilot-mode 1)))
+(add-hook 'prog-mode-hook #'copilot-mode-enable-unless-temp-buffer)
 (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
 (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
 
